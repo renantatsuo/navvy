@@ -39,7 +39,7 @@ export const PagesNavItem = ({
     <>
       <button
         ref={buttonRef}
-        draggable={!isSettingsOpen}
+        draggable={!isSettingsOpen && !!props.onDragStart}
         onClick={onClick}
         onContextMenu={handleContextMenu}
         className={classNames(

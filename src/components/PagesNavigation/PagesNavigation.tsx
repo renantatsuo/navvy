@@ -1,5 +1,6 @@
 "use client";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import classNames from "classnames";
 import React from "react";
 import { Page } from "~/app/page";
 import { PagesNavItem } from "~/components/PagesNavigation/PagesNavItem";
@@ -59,21 +60,48 @@ export const PagesNavigation = ({
 
   return (
     <div className="flex items-center px-4 py-2 gap-1">
-      <div className="flex items-center space-x-1">
-        {pages.map((page) => (
-          <PagesNavItem
-            key={page.id}
-            page={page}
-            isActive={activePage === page.id}
-            isDragging={drag === page.id}
-            onClick={handleTabClick(page.id)}
-            onDragStart={handleDragStart(page.id)}
-            onDragEnter={handleDragEnter(page.id)}
-            onDragEnd={handleDragEnd}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-          />
-        ))}
+      <div className="flex space-x-1">
+        {pages.map((page, idx) => {
+          const isLastPage = idx === pages.length - 1;
+          return (
+            <React.Fragment key={page.id}>
+              {isLastPage ? (
+                <PagesNavItem
+                  page={page}
+                  isActive={activePage === page.id}
+                  isDragging={drag === page.id}
+                  onClick={handleTabClick(page.id)}
+                />
+              ) : (
+                <PagesNavItem
+                  page={page}
+                  isActive={activePage === page.id}
+                  isDragging={drag === page.id}
+                  onClick={handleTabClick(page.id)}
+                  onDragStart={handleDragStart(page.id)}
+                  onDragEnter={handleDragEnter(page.id)}
+                  onDragEnd={handleDragEnd}
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                />
+              )}
+              <div
+                className={classNames(
+                  "pages-divider relative group cursor-pointer",
+                  {
+                    "hover:w-10 transition-[width]": !isLastPage,
+                  }
+                )}
+              >
+                {!isLastPage ? (
+                  <button className="z-1 bg-white rounded-full border-1 border-gray-200 hidden group-hover:block cursor-pointer">
+                    <PlusIcon className="size-3" />
+                  </button>
+                ) : null}
+              </div>
+            </React.Fragment>
+          );
+        })}
       </div>
 
       <button className="button">
