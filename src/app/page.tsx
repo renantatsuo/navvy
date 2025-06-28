@@ -41,7 +41,8 @@ export default function Home() {
         icon: DocumentTextIcon,
       };
       const updatedPages = [...prevPages, newPage];
-      const addPageIdx = atIndex ? atIndex + 1 : updatedPages.length - 2;
+      const addPageIdx =
+        atIndex !== undefined ? atIndex + 1 : updatedPages.length - 2;
       return moveItem(updatedPages, updatedPages.length - 1, addPageIdx);
     });
   };
