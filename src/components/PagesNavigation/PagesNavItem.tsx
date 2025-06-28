@@ -1,6 +1,8 @@
+import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import React from "react";
 import { Page } from "~/app/page";
+import { PageSettings } from "~/components/PagesNavigation/PageSettings";
 
 type PagesNavItemProps = {
   page: Page;
@@ -17,15 +19,30 @@ export const PagesNavItem = ({
   ...props
 }: PagesNavItemProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const rect = buttonRef.current?.getBoundingClientRect();
+  const settingsPosition = {
+    x: rect?.left || 0,
+    y: (rect?.bottom || 0) + 2,
+  };
 
   const handleContextMenu: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     setIsSettingsOpen(true);
   };
 
+  const handleSettingsClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    setIsSettingsOpen(true);
+  };
+
+  const closeSettings = () => setIsSettingsOpen(false);
+  const showSettingsHandler = isActive && !isDragging;
+
   return (
     <>
       <button
+        ref={buttonRef}
         draggable={!isSettingsOpen}
         onClick={onClick}
         onContextMenu={handleContextMenu}
@@ -49,7 +66,19 @@ export const PagesNavItem = ({
           })}
         />
         <span>{page.title}</span>
+
+        {showSettingsHandler ? (
+          <div onMouseDown={handleSettingsClick}>
+            <EllipsisVerticalIcon className="size-4 text-gray-600" />
+          </div>
+        ) : null}
       </button>
+
+      <PageSettings
+        isOpen={isSettingsOpen}
+        close={closeSettings}
+        position={settingsPosition}
+      />
     </>
   );
 };
