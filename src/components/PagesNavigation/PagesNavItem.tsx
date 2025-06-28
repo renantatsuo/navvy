@@ -20,11 +20,7 @@ export const PagesNavItem = ({
 }: PagesNavItemProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
-  const rect = buttonRef.current?.getBoundingClientRect();
-  const settingsPosition = {
-    x: rect?.left || 0,
-    y: (rect?.bottom || 0) + 2,
-  };
+  const itemRect = buttonRef.current?.getBoundingClientRect();
 
   const handleContextMenu: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
@@ -74,11 +70,13 @@ export const PagesNavItem = ({
         ) : null}
       </button>
 
-      <PageSettings
-        isOpen={isSettingsOpen}
-        close={closeSettings}
-        position={settingsPosition}
-      />
+      {itemRect ? (
+        <PageSettings
+          isOpen={isSettingsOpen}
+          close={closeSettings}
+          parentRect={itemRect}
+        />
+      ) : null}
     </>
   );
 };

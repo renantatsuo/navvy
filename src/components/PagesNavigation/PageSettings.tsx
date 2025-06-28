@@ -11,7 +11,7 @@ import React from "react";
 type PageSettingsProps = {
   isOpen: boolean;
   close: () => void;
-  position: { x: number; y: number };
+  parentRect: DOMRect;
   onSetAsFirstPage?: () => void;
   onRename?: () => void;
   onCopy?: () => void;
@@ -22,7 +22,7 @@ type PageSettingsProps = {
 export const PageSettings = ({
   isOpen,
   close,
-  position,
+  parentRect,
   onSetAsFirstPage,
   onRename,
   onCopy,
@@ -30,6 +30,27 @@ export const PageSettings = ({
   onDelete,
 }: PageSettingsProps) => {
   const menuRef = React.useRef<HTMLDivElement>(null);
+  const [menuPosition, setMenuPosition] = React.useState({
+    x: parentRect.left,
+    y: parentRect.bottom + 16,
+  });
+
+  React.useEffect(() => {
+    if (!menuRef.current) return;
+
+    const menuSize = menuRef.current.getBoundingClientRect();
+
+    let x = parentRect.left;
+    let y = parentRect.bottom + 16;
+    if (x + menuSize.width > window.innerWidth) {
+      x = x - menuSize.width - 16;
+    }
+    if (y + menuSize.height > window.innerHeight) {
+      y = parentRect.top - menuSize.height - 16;
+    }
+
+    setMenuPosition({ x, y });
+  }, [parentRect]);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -55,17 +76,6 @@ export const PageSettings = ({
       document.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen, close]);
-
-  const menuXPosition = React.useMemo(() => {
-    if (typeof window === "undefined") return;
-    const menuWidth = 200;
-
-    if (position.x + menuWidth > window.innerWidth) {
-      return position.x - menuWidth - 16;
-    }
-
-    return position.x;
-  }, [position.x]);
 
   if (!isOpen) return null;
 
@@ -107,9 +117,10 @@ export const PageSettings = ({
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 top-12  bg-white rounded-lg shadow-lg border border-gray-200  min-w-[200px] animate-in fade-in-0 zoom-in-95 duration-100"
+      className="fixed z-50 bg-white rounded-lg shadow-lg border border-gray-200  min-w-[200px]"
       style={{
-        left: menuXPosition,
+        left: menuPosition.x,
+        top: menuPosition.y,
       }}
     >
       <div className="px-4 py-2 text-sm font-semibold text-fillout-foreground border-b border-gray-100 bg-neutral-50">
