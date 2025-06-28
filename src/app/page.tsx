@@ -5,7 +5,8 @@ import {
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import React from "react";
-import { PagesNavigation } from "~/components/PagesNavigation/PagesNavigation";
+import { PagesNavigation } from "~/components/PagesNavigation";
+import { moveItem } from "~/lib/array";
 
 export type Page = {
   id: string;
@@ -13,6 +14,7 @@ export type Page = {
   content: Record<string, unknown>;
   icon: typeof CheckCircleIcon;
 };
+export type AddPageFn = (atIndex?: number) => void;
 
 const mockPages: Array<Page> = [
   { id: "info", title: "Info", content: {}, icon: InformationCircleIcon },
@@ -29,6 +31,21 @@ export default function Home() {
     setActivePage(pageId);
   };
 
+  const addPage: AddPageFn = (atIndex) => {
+    setPages((prevPages) => {
+      const title = `Page ${pages.length - 3}`;
+      const newPage: Page = {
+        id: title,
+        title: title,
+        content: {},
+        icon: DocumentTextIcon,
+      };
+      const updatedPages = [...prevPages, newPage];
+      const addPageIdx = atIndex ? atIndex + 1 : updatedPages.length - 2;
+      return moveItem(updatedPages, updatedPages.length - 1, addPageIdx);
+    });
+  };
+
   return (
     <div className="flex justify-center min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 sm:items-start">
@@ -37,6 +54,7 @@ export default function Home() {
           activePage={activePage}
           onPageChange={onPageChange}
           updatePages={setPages}
+          addPage={addPage}
         />
       </main>
     </div>

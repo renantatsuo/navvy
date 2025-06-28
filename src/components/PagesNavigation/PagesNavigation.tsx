@@ -2,7 +2,7 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import React from "react";
-import { Page } from "~/app/page";
+import { AddPageFn, Page } from "~/app/page";
 import { PagesNavItem } from "~/components/PagesNavigation/PagesNavItem";
 import * as Arr from "~/lib/array";
 
@@ -11,6 +11,7 @@ type PagesNavigationProps = {
   activePage: string;
   onPageChange?: (tabId: string) => void;
   updatePages: (cb: (pages: Array<Page>) => Array<Page>) => void;
+  addPage: AddPageFn;
 };
 
 export const PagesNavigation = ({
@@ -18,6 +19,7 @@ export const PagesNavigation = ({
   activePage,
   onPageChange,
   updatePages,
+  addPage,
 }: PagesNavigationProps) => {
   const [drag, setDrag] = React.useState<string | null>(null);
 
@@ -58,6 +60,10 @@ export const PagesNavigation = ({
     e.preventDefault();
   };
 
+  const handleAddPage = (idx?: number) => () => {
+    addPage(idx);
+  };
+
   return (
     <div className="flex items-center px-4 py-2 gap-1">
       <div className="flex space-x-1">
@@ -89,12 +95,15 @@ export const PagesNavigation = ({
                 className={classNames(
                   "pages-divider relative group cursor-pointer",
                   {
-                    "hover:w-10 transition-[width]": !isLastPage,
+                    "hover:w-10 transition-[width] duration-50": !isLastPage,
                   }
                 )}
               >
                 {!isLastPage ? (
-                  <button className="z-1 bg-white rounded-full border-1 border-gray-200 hidden group-hover:block cursor-pointer">
+                  <button
+                    className="z-1 bg-white rounded-full border-1 border-gray-200 hidden group-hover:block cursor-pointer"
+                    onClick={handleAddPage(idx)}
+                  >
                     <PlusIcon className="size-3" />
                   </button>
                 ) : null}
@@ -104,7 +113,7 @@ export const PagesNavigation = ({
         })}
       </div>
 
-      <button className="button">
+      <button className="button" onClick={handleAddPage()}>
         <PlusIcon className="size-4" />
         <span>Add page</span>
       </button>
