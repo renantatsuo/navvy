@@ -1,7 +1,7 @@
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import React from "react";
-import { Page } from "~/app/page";
+import { Page } from "~/components/PagesNavigation";
 import { PageSettings } from "~/components/PagesNavigation/PageSettings";
 
 type PagesNavItemProps = {
